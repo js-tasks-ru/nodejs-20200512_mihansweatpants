@@ -5,17 +5,26 @@ class LineSplitStream extends stream.Transform {
   constructor(options) {
     super(options);
 
-    this.lines = '';
+    this.remainingChars = '';
   }
 
   _transform(chunk, encoding, callback) {
-    this.lines += chunk;
+    const str = this.remainingChars + chunk.toString();
+    const lines = str.split(os.EOL);
+    const lastLine = lines.pop();
+
+    for (const line of lines) {
+      this.push(line);
+    }
+
+    this.remainingChars = lastLine;
+
     callback();
   }
 
   _flush(callback) {
-    for (const line of this.lines.split(os.EOL)) {
-      this.push(line);
+    if (this.remainingChars) {
+      this.push(this.remainingChars);
     }
 
     callback();
