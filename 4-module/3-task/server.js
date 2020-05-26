@@ -1,6 +1,7 @@
 const url = require('url');
 const http = require('http');
 const path = require('path');
+const fs = require('fs');
 
 const server = new http.Server();
 
@@ -11,7 +12,23 @@ server.on('request', (req, res) => {
 
   switch (req.method) {
     case 'DELETE':
+      if (pathname.indexOf('/') !== -1) {
+        res.statusCode = 400;
+        res.end('Nested paths not allowed');
+        return;
+      }
 
+      fs.access(filepath, (err) => {
+        if (err) {
+          res.statusCode = 404;
+          res.end('File not found');
+        } else {
+          fs.unlink(filepath, () => {
+            res.statusCode = 200;
+            res.end('File successfully deleted');
+          });
+        }
+      });
       break;
 
     default:
