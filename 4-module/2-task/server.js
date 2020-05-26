@@ -42,7 +42,9 @@ server.on('request', (req, res) => {
           });
 
           req.on('close', () => {
-            fs.unlinkSync(filepath);
+            if (req.aborted) {
+              fs.unlinkSync(filepath);
+            }
           });
 
           req.pipe(limitStream).pipe(file);
