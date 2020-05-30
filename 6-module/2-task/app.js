@@ -22,9 +22,22 @@ app.use(async (ctx, next) => {
 
 const router = new Router({prefix: '/api'});
 
+async function handleMongoIDCastError(ctx, next) {
+  try {
+    await next();
+  } catch (err) {
+    if (err.name === 'CastError') {
+      ctx.status = 400;
+      ctx.body = 'Invalid id';
+    } else {
+      throw err;
+    }
+  }
+}
+
 router.get('/categories', categoryList);
 router.get('/products', productsBySubcategory, productList);
-router.get('/products/:id', productById);
+router.get('/products/:id', handleMongoIDCastError, productById);
 
 app.use(router.routes());
 
