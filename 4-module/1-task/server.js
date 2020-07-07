@@ -14,7 +14,7 @@ server.on('request', (req, res) => {
     case 'GET':
       if (pathname.indexOf('/') !== -1) {
         res.statusCode = 400;
-        res.end('Nested paths not allowed');
+        return res.end('Nested paths not allowed');
       }
 
       fs.access(filepath, (err) => {
