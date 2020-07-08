@@ -12,5 +12,8 @@ module.exports = function authenticate(strategy, email, displayName, done) {
         }
 
         done(null, user);
+      })
+      .catch((err) => {
+        done(err);
       });
 };
