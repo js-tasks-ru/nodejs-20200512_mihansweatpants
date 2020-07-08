@@ -2,7 +2,7 @@ const User = require('../../models/User');
 
 module.exports = function authenticate(strategy, email, displayName, done) {
   if (!email) {
-    done(null, false, 'Не указан email');
+    return done(null, false, 'Не указан email');
   }
 
   User.findOne({email})
